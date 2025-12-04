@@ -7,7 +7,7 @@ package frc.robot.Subsystems.SwervedriveSubsystem;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 /** Add your docs here. */
-public abstract class ModuleIO {
+public interface ModuleIO {
     public abstract double getSpeed(); 
     public abstract void setSpeed(double speed); 
     public abstract Rotation2d getOrientation(); 

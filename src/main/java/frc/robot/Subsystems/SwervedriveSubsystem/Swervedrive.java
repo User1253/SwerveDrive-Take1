@@ -4,11 +4,13 @@
 
 package frc.robot.Subsystems.SwervedriveSubsystem;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.units.measure.LinearVelocity;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -27,7 +29,7 @@ public class Swervedrive extends SubsystemBase {
 
 
   /** Creates a new Drivetrain. */
-  public Swervedrive(ModuleIO leftFrontIO, ModuleIO rightFrontIO, ModuleIO leftBackIO, ModuleIO rightBackIO, Translation2d leftFrontModuleOffset,Translation2d rightFrontModuleOffset,Translation2d leftBackModuleOffset,Translation2d rightBackModuleOffset) {
+  public Swervedrive(ModuleIO leftFrontIO, ModuleIO rightFrontIO, ModuleIO leftBackIO, ModuleIO rightBackIO, Translation2d leftFrontModuleOffset,Translation2d rightFrontModuleOffset,Translation2d leftBackModuleOffset,Translation2d rightBackModuleOffset, GyroIO gyro) {
     this.leftFrontModule = new Module(leftFrontIO); 
     this.leftBackModule = new Module(leftBackIO);
     this.RightFrontModule = new Module(rightFrontIO);
@@ -37,14 +39,11 @@ public class Swervedrive extends SubsystemBase {
   }
 
 
-public Command SwervedriveArcadeCommand(LinearVelocity vx, LinearVelocity vy, LinearVelocity omega){
-    ChassisSpeeds rRS = new ChassisSpeeds(vx.get(), vy.get(), omega.get());
-    ChassisSpeeds fRS = new ChassisSpeeds(); 
+public Command SwervedriveArcadeCommand(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier omega){
+    ChassisSpeeds rRS = new ChassisSpeeds(vx.getAsDouble(), vy.getAsDouble(), omega.getAsDouble());
+    ChassisSpeeds fRS = ChassisSpeeds.fromRobotRelativeSpeeds(rRS, this.gyro.getOrientation()); 
     SwerveModuleState[] state = this.mKinematics.toSwerveModuleStates(fRS); 
-    return this.leftFrontModule.setState(state);
-    this.leftBackModule.setState(state); 
-    this.RightFrontModule.setState(state);
-    this.RightBackModule.setState(state);
+    return this.run(() -> {this.leftFrontModule.setState(state[0]); this.RightFrontModule.setState(state[1]); this.leftBackModule.setState(state[2]); this.RightBackModule.setState(state[3]);}); 
   }
 
   @Override

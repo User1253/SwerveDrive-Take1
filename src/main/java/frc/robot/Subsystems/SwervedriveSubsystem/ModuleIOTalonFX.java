@@ -4,7 +4,7 @@
 
 package frc.robot.Subsystems.SwervedriveSubsystem;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -17,7 +17,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 
 
 /** Add your docs here. */
-public class ModuleIOTalonFX extends ModuleIO{
+public class ModuleIOTalonFX implements ModuleIO{
 
     TalonFX drive;  
     TalonFX turn; 
@@ -56,7 +56,7 @@ public class ModuleIOTalonFX extends ModuleIO{
         turnConfig.Feedback.FeedbackRemoteSensorID = AE_ID; 
 
         StatusCode configDriveStatus = this.drive.getConfigurator().apply(driveConfig);
-        StatusCode configTurnStatus = this.drive.getConfigurator().apply(driveConfig);
+        StatusCode configTurnStatus = this.drive.getConfigurator().apply(turnConfig);
 
         while (!configDriveStatus.isOK()) configDriveStatus = this.drive.getConfigurator().apply(driveConfig);
         while (!configTurnStatus.isOK()) configTurnStatus = this.turn.getConfigurator().apply(turnConfig);
